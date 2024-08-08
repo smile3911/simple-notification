@@ -1,0 +1,107 @@
+local RunService = game:GetService("RunService")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game.CoreGui
+
+local notificationFrame = Instance.new("Frame")
+notificationFrame.Size = UDim2.new(0, 200, 0, 120)
+notificationFrame.Position = UDim2.new(1, -210, 1, -130)
+notificationFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+notificationFrame.BorderSizePixel = 0
+notificationFrame.Visible = false
+notificationFrame.Parent = screenGui
+
+local notificationTitle = Instance.new("TextLabel")
+notificationTitle.Size = UDim2.new(1, 0, 0, 30)
+notificationTitle.Position = UDim2.new(0, 0, 0, 0)
+notificationTitle.Text = "Notification Title"
+notificationTitle.TextColor3 = Color3.new(1, 1, 1)
+notificationTitle.BackgroundTransparency = 1
+notificationTitle.TextScaled = true
+notificationTitle.Parent = notificationFrame
+
+local notificationMessage = Instance.new("TextLabel")
+notificationMessage.Size = UDim2.new(1, 0, 0, 40)
+notificationMessage.Position = UDim2.new(0, 0, 0, 30)
+notificationMessage.Text = "This is a notification message."
+notificationMessage.TextColor3 = Color3.new(1, 1, 1)
+notificationMessage.BackgroundTransparency = 1
+notificationMessage.TextScaled = true
+notificationMessage.TextWrapped = true
+notificationMessage.Parent = notificationFrame
+
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 50, 0, 25)
+closeButton.Position = UDim2.new(1, -60, 1, -30)
+closeButton.Text = "Close"
+closeButton.BackgroundColor3 = Color3.new(1, 1, 1)
+closeButton.TextColor3 = Color3.new(0, 0, 0)
+closeButton.BorderSizePixel = 0
+closeButton.Parent = notificationFrame
+
+local progressBarBackground = Instance.new("Frame")
+progressBarBackground.Size = UDim2.new(1, -20, 0, 8)
+progressBarBackground.Position = UDim2.new(0, 10, 0, 80)
+progressBarBackground.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+progressBarBackground.BorderSizePixel = 0
+progressBarBackground.Parent = notificationFrame
+
+local progressBar = Instance.new("Frame")
+progressBar.Size = UDim2.new(1, 0, 1, 0)
+progressBar.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+progressBar.BorderSizePixel = 0
+progressBar.Parent = progressBarBackground
+
+local function show(title, message, duration)
+    notificationTitle.Text = title
+    notificationMessage.Text = message
+    notificationFrame.Visible = true
+    
+    progressBar.Size = UDim2.new(1, 0, 1, 0)
+    
+    local startTime = tick()
+    local endTime = startTime + duration
+
+    local connection
+    connection = RunService.RenderStepped:Connect(function()
+        local now = tick()
+        local remainingTime = endTime - now
+        if remainingTime > 0 then
+            local progress = remainingTime / duration
+            progressBar.Size = UDim2.new(progress, 0, 1, 0)
+            if progress < 0.5 then
+                closeNotification()
+            end
+        else
+            closeNotification()
+        end
+    end)
+end
+
+local function closeNotification()
+    local closeDuration = 0.5
+    local closeStartTime = tick()
+    local closeEndTime = closeStartTime + closeDuration
+
+    local connection
+    connection = RunService.RenderStepped:Connect(function()
+        local closeNow = tick()
+        local closeRemainingTime = closeEndTime - closeNow
+        local scale = math.max(0, closeRemainingTime / closeDuration)
+        notificationFrame.Size = UDim2.new(0, 200 * scale, 0, 120 * scale)
+        notificationFrame.Position = UDim2.new(1, -200 * scale - 10, 1, -120 * scale - 10)
+        notificationFrame.BackgroundTransparency = 1 - scale
+
+        if scale <= 0 then
+            notificationFrame.Visible = false
+            connection:Disconnect()
+        end
+    end)
+end
+
+closeButton.MouseButton1Click:Connect(function()
+    closeNotification()
+end)
+
+show("Sample Notification", "This message will disappear in 5 seconds.", 5)
