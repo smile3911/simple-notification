@@ -15,21 +15,11 @@ notificationFrame.Parent = screenGui
 local notificationTitle = Instance.new("TextLabel")
 notificationTitle.Size = UDim2.new(1, 0, 0, 30)
 notificationTitle.Position = UDim2.new(0, 0, 0, 0)
-notificationTitle.Text = "Notification Title"
+notificationTitle.Text = "Notification"
 notificationTitle.TextColor3 = Color3.new(1, 1, 1)
 notificationTitle.BackgroundTransparency = 1
 notificationTitle.TextScaled = true
 notificationTitle.Parent = notificationFrame
-
-local notificationMessage = Instance.new("TextLabel")
-notificationMessage.Size = UDim2.new(1, 0, 0, 40)
-notificationMessage.Position = UDim2.new(0, 0, 0, 30)
-notificationMessage.Text = "This is a notification message."
-notificationMessage.TextColor3 = Color3.new(1, 1, 1)
-notificationMessage.BackgroundTransparency = 1
-notificationMessage.TextScaled = true
-notificationMessage.TextWrapped = true
-notificationMessage.Parent = notificationFrame
 
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 50, 0, 25)
